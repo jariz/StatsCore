@@ -11,7 +11,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "JariZ\\Stats": "Stats/src/"
+            "JariZ\\Stats": "StatsCore/Stats/src"
         }
     },
     "minimum-stability": "dev"
