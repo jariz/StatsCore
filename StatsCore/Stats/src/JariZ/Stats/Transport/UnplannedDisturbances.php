@@ -24,7 +24,7 @@ class UnplannedDisturbances extends Stat {
         if(!isset($disturbances->total)) return StatHelper::returnCollect(StatHelper::TYPE_ERROR, 0);
 
         if($disturbances->total <= 3) return StatHelper::returnCollect(StatHelper::TYPE_SUCCESS, $disturbances->total);
-        else if($disturbances->total <= 5) return StatHelper::returnCollect(StatHelper::TYPE_WARNING, $disturbances->total);
+        else if($disturbances->total <= 6) return StatHelper::returnCollect(StatHelper::TYPE_WARNING, $disturbances->total);
         else return StatHelper::returnCollect(StatHelper::TYPE_FATAL, $disturbances->total);
     }
 }

@@ -28,7 +28,7 @@ class StatsCore
         }
     }
 
-    private $stats;
+    public $stats;
 
     /**
      * Trigger all stats to collect, depending on type.
@@ -46,6 +46,55 @@ class StatsCore
                 $this->save($collect, $stat);
             }
         }
+    }
+
+    public function getCategories() {
+        $ret = array();
+        foreach($this->stats as $stat) {
+            /* @var $stat Stat */
+            if(!in_array($stat->category, $ret))
+                $ret[] = $stat->category;
+        }
+        return $ret;
+    }
+
+    public function getStatsInCategory($category) {
+        $ret = array();
+        foreach($this->stats as $stat) {
+            /* @var $stat Stat */
+            if(strtolower($stat->category) == strtolower($category))
+                $ret[] = $stat;
+        }
+        return $ret;
+    }
+
+    private function getModel($stat) {
+        return StatModel::where("class", "=", $stat->class)->whereNotIn("type", array('error'))->get()->last();
+    }
+
+    public function getStatus($stat) {
+        return $this->getModel($stat)->type;
+    }
+
+    public function getValue($stat) {
+        return $this->getModel($stat)->value;
+    }
+
+    public function getAverageStatus($category) {
+        $statuses = array();
+        $stats = $this->getStatsInCategory($category);
+        foreach($stats as $stat)
+            /* @var $stat Stat */
+            $statuses[] = $this->getStatus($stat);
+
+        if(in_array(StatHelper::TYPE_FATAL, $statuses)) return StatHelper::TYPE_FATAL;
+        else if(in_array(StatHelper::TYPE_WARNING, $statuses)) return StatHelper::TYPE_WARNING;
+        else return StatHelper::TYPE_SUCCESS;
+    }
+
+    public function _2bootstrap($state) {
+        if($state == StatHelper::TYPE_FATAL) return "error";
+        else return $state;
     }
 
     /**
