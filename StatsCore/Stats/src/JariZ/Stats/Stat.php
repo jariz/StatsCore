@@ -4,6 +4,8 @@
  */
 
 namespace JariZ\Stats;
+use Illuminate\Console\Command;
+
 class Stat {
 
     /**
@@ -29,7 +31,8 @@ class Stat {
     /**
      * This will be called whenever the data needs to be collected (how many times is based on the $type property)<br>
      * Needs to return an array with indexes int 'val' and array 'status' which can contain one of 3 values 'success', 'warning', 'critical', and 'error' with 'error' being not able to get the data from the feed.
+     * @param \Illuminate\Console\Command $command The commandline that can be used for ->info and ->error
      * @returns array
      */
-    public function collect() {}
+    public function collect(Command $command) {}
 }

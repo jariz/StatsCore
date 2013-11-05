@@ -35,14 +35,14 @@ class StatsCore
      * @param $type string Required, specifies the stat type, for example: minute, daily, hourly
      * @param Command $command Command parent that's calling this function
      */
-    public function collect($type, Command $command=null)
+    public function collect($type, Command $command)
     {
         foreach ($this->stats as $stat) {
             /* @var $stat Stat */
             if ($stat->type == $type) {
-                if($command != null) $command->info("Collecting " . $stat->name . " in " . $stat->category);
-                $collect = $stat->collect();
-                if($command != null) echo "Value: ".$collect["val"]." Type: ".$collect["type"]."\n";
+                $command->info("Collecting " . $stat->name . " in " . $stat->category);
+                $collect = $stat->collect($command);
+                echo "Value: ".$collect["val"]." Type: ".$collect["type"]."\n";
                 $this->save($collect, $stat);
             }
         }
@@ -80,6 +80,21 @@ class StatsCore
         return $this->getModel($stat)->value;
     }
 
+    public function getFlot($stat, $encode=true) {
+        $arr = StatModel::where("timestamp", ">=", time() - (60 * 60 * 24 * 7))->where("class", "=", $stat->class)->get(array("timestamp", "value"))->toArray();
+        $ret = array();
+        foreach($arr as $a)
+            $ret[] = array($a["timestamp"] * 1000, $a["value"]);
+        $ret = array($ret);
+        if($encode) return json_encode($ret);
+        else return $ret;
+    }
+
+    /**
+     * Get the average status from a category based on the stats in them.
+     * @param $category string The category the status needs to be 'calculated' from
+     * @return string The average status
+     */
     public function getAverageStatus($category) {
         $statuses = array();
         $stats = $this->getStatsInCategory($category);
@@ -93,7 +108,7 @@ class StatsCore
     }
 
     public function _2bootstrap($state) {
-        if($state == StatHelper::TYPE_FATAL) return "error";
+        if($state == StatHelper::TYPE_FATAL) return "danger";
         else return $state;
     }
 

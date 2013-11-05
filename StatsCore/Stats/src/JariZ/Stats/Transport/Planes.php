@@ -9,6 +9,7 @@
 namespace JariZ\Stats\Transport;
 
 
+use Illuminate\Console\Command;
 use JariZ\Stats\StatHelper;
 
 class Planes {
@@ -18,7 +19,7 @@ class Planes {
 
     public $category = "Transport";
 
-    public function collect() {
+    public function collect(Command $command) {
         $planes = StatHelper::getFile("http://db8.flightradar24.com/zones/germany_all.js", false);
 
         $planes = substr($planes, 12);

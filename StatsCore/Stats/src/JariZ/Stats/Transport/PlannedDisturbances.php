@@ -7,18 +7,19 @@
  */
 
 namespace JariZ\Stats\Transport;
+use Illuminate\Console\Command;
 use JariZ\Stats\Stat;
 use JariZ\Stats\StatHelper;
 
 class PlannedDisturbances extends Stat {
 
-    public $name = "Geplande Vertragingen";
+    public $name = "OV Geplande Vertragingen";
 
     public $type = "minute";
 
     public $category = "Transport";
 
-    public function collect() {
+    public function collect(Command $command) {
         $disturbances = StatHelper::getFile("http://api.9292.nl/0.1/messages/deviations?lang=en-GB", true);
 
         if(!isset($disturbances->total)) return StatHelper::returnCollect(StatHelper::TYPE_ERROR, 0);
